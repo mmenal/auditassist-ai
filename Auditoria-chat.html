@@ -128,7 +128,9 @@ small {
 
 <script>
 //const webhook = "https://n8n.srv936362.hstgr.cloud/webhook/auditoria-iso";
-const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/auditoria-iso";
+//const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/auditoria-iso";
+const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/6fbe7045-29f5-4435-95fa-da38fcf679bd";
+
 const sessionId = localStorage.getItem("auditSession") || crypto.randomUUID();
 localStorage.setItem("auditSession", sessionId);
 
@@ -177,7 +179,8 @@ async function enviarConsulta() {
   // 👇 SEGUNDO PARSEO (CLAVE)
   const respuestaIA = JSON.parse(data.respuesta);
 
-  if (respuestaIA.pregunta_adicional) {
+  
+  if (respuestaIA.pregunta_adicional)  {
     agregarMensaje("agente", respuestaIA.pregunta_adicional);
   } else {
     agregarMensaje("agente", "Auditoría analizada correctamente.");
@@ -199,7 +202,10 @@ function agregarMensaje(tipo, texto) {
   });
 
   const data = await res.json();
-  if (data.respuesta.pregunta_adicional) {
+
+//  add("ai", data.respuestaIA);
+
+if (data.respuesta.pregunta_adicional) {
   add("ai", data.respuesta.pregunta_adicional);
 } else {
   add("ai", data.respuesta.descripcion_hallazgo);

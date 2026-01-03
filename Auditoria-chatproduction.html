@@ -191,7 +191,6 @@ function agregarMensaje(tipo, texto) {
   chat.appendChild(div);
 }
 
-
   const res = await fetch(webhook, {
     method: "POST",
     body: formData

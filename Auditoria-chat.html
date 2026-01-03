@@ -127,7 +127,8 @@ small {
 </div>
 
 <script>
-const webhook = "https://n8n.srv936362.hstgr.cloud/webhook/auditoria-iso";
+//const webhook = "https://n8n.srv936362.hstgr.cloud/webhook/auditoria-iso";
+const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/auditoria-iso";
 const sessionId = localStorage.getItem("auditSession") || crypto.randomUUID();
 localStorage.setItem("auditSession", sessionId);
 
@@ -165,7 +166,7 @@ async function enviarConsulta() {
 
   agregarMensaje("usuario", mensaje);
 
-  const res = await fetch("TU_URL_DEL_WEBHOOK", {
+  const res = await fetch(webhook, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ mensaje })

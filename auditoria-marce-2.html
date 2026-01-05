@@ -109,8 +109,11 @@
             for (let i = 0; i < files.length; i++) {
                 formData.append("documentos", files[i]);
             }
+            //test
+            //const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/auditoria-iso";
 
-            const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/2b0d6559-bc3a-42fa-9885-7838021536b3";
+            //productivo
+            const webhook = "https://n8n.srv936362.hstgr.cloud/webhook/auditoria-iso";
 
             try {
                 const response = await fetch(webhook, {
@@ -131,15 +134,13 @@
                 // parsea la respuesta JSON
                 const data = await response.json();
 
-                //const respuestaIA = JSON.parse(data);
 
                 // n8n debe devolver un campo llamado "output"
                 //agregarMensaje(data.output || "Error: No recibí respuesta válida.", 'n8n');
                 
                 console.log("Estructura real:", data);
-                //console.log(JSON.stringify(data, null, 2));
 
-                agregarMensaje(data.Resultado.evidencia || "Error: No recibí respuesta válida.", 'n8n');
+                agregarMensaje(data[0].Resultado.evidencia || "Error: No recibí respuesta válida.", 'n8n');
 
             } catch (e) {
                 agregarMensaje("Error de conexión con el servidor.", 'n8n');

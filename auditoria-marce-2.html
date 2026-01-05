@@ -110,7 +110,7 @@
                 formData.append("documentos", files[i]);
             }
 
-            const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/5e906095-92de-4ad6-9e64-62219dcd72eb";
+            const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/2b0d6559-bc3a-42fa-9885-7838021536b3";
 
             try {
                 const response = await fetch(webhook, {
@@ -124,16 +124,22 @@
                 //    body: JSON.stringify({ chatInput: msg, sessionId: sessionId })
                 //});
 
+                //if (!response.ok) {
+                //    throw new Error('El servidor devolvió un error en la respuesta: ' + response.status);
+                //}
 
                 // parsea la respuesta JSON
                 const data = await response.json();
 
+                //const respuestaIA = JSON.parse(data);
+
                 // n8n debe devolver un campo llamado "output"
                 //agregarMensaje(data.output || "Error: No recibí respuesta válida.", 'n8n');
+                
+                console.log("Estructura real:", data);
+                //console.log(JSON.stringify(data, null, 2));
 
-                console.log(JSON.stringify(data, null, 2));
-
-                agregarMensaje(data.output.tipo_hallazgo || "Error: No recibí respuesta válida.", 'n8n');
+                agregarMensaje(data.Resultado.evidencia || "Error: No recibí respuesta válida.", 'n8n');
 
             } catch (e) {
                 agregarMensaje("Error de conexión con el servidor.", 'n8n');

@@ -134,6 +134,7 @@ const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/5e906095-92de-4a
 const sessionId = localStorage.getItem("auditSession") || crypto.randomUUID();
 localStorage.setItem("auditSession", sessionId);
 
+//funcion para agregar mensajes al chat
 function add(role, text) {
   const div = document.createElement("div");
   div.className = "msg " + role;
@@ -142,13 +143,17 @@ function add(role, text) {
   document.getElementById("chat").scrollTop = 999999;
 }
 
+//funcion para preparar el contenido antes del envío del  mensaje
 async function send() {
   const text = document.getElementById("input").value.trim();
   if (!text) return;
 
+  //agrega el texto al chat en la clase user
   add("user", text);
+  //pone el campo del input en blanco
   document.getElementById("input").value = "";
 
+  //genera el form data con los campos del contexto
   const formData = new FormData();
   formData.append("session_id", sessionId);
   formData.append("mensaje", text);
@@ -156,17 +161,18 @@ async function send() {
   formData.append("proceso", document.getElementById("proceso").value);
   formData.append("empresa", document.getElementById("empresa").value);
   formData.append("fecha", document.getElementById("fecha").value);
-
+  //genera el form data con los archivos que se adjuntaron
   const files = document.getElementById("docs").files;
   for (let i = 0; i < files.length; i++) {
     formData.append("documentos", files[i]);
   }
 
-
+  //fetch al webhook de n8n
   async function enviarConsulta() {
     const mensaje = document.getElementById("inputChat").value;
 
     agregarMensaje("usuario", mensaje);
+    
 
     const res = await fetch(webhook, {
       method: "POST",
@@ -185,6 +191,7 @@ async function send() {
     }
   }
 
+  //funcion para agregar mensajes al chat
   function agregarMensaje(tipo, texto) {
     const chat = document.getElementById("chat");
     const div = document.createElement("div");

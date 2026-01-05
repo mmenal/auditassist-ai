@@ -80,7 +80,7 @@
             // si es de n8n, renderizamos el Markdown.
             div.innerHTML = clase === 'n8n' ? marked.parse(texto) : texto;
             
-            console.log(texto);
+            //console.log(texto);
             
             document.getElementById('chat-container').appendChild(div);
             document.getElementById('chat-container').scrollTop = document.getElementById('chat-container').scrollHeight;
@@ -99,7 +99,7 @@
 
             const formData = new FormData();
             formData.append("session_id", sessionId);
-            formData.append("mensaje", text);
+            formData.append("mensaje", msg);
             formData.append("norma", document.getElementById("norma").value);
             formData.append("proceso", document.getElementById("proceso").value);
             formData.append("empresa", document.getElementById("empresa").value);
@@ -115,15 +115,30 @@
             try {
                 const response = await fetch(webhook, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ chatInput: msg, sessionId: sessionId })
+                    body: formData
                 });
 
+                //const response = await fetch(webhook, {
+                //    method: 'POST',
+                //    headers: { 'Content-Type': 'application/json' },
+                //    body: JSON.stringify({ chatInput: msg, sessionId: sessionId })
+                //});
+
+
+                // parsea la respuesta JSON
                 const data = await response.json();
+
                 // n8n debe devolver un campo llamado "output"
-                agregarMensaje(data.output || "Error: No recibí respuesta válida.", 'n8n');
+                //agregarMensaje(data.output || "Error: No recibí respuesta válida.", 'n8n');
+
+                console.log(JSON.stringify(data, null, 2));
+
+                agregarMensaje(data.output.tipo_hallazgo || "Error: No recibí respuesta válida.", 'n8n');
+
             } catch (e) {
                 agregarMensaje("Error de conexión con el servidor.", 'n8n');
+                console.error(e);
+                
             } finally {
                 document.getElementById('typing-indicator').style.display = 'none';
                 document.getElementById('sendBtn').disabled = false;

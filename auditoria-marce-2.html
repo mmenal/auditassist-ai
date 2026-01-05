@@ -113,19 +113,14 @@
             //const webhook = "https://n8n.srv936362.hstgr.cloud/webhook-test/auditoria-iso";
 
             //productivo
-            const webhook = "https://n8n.srv936362.hstgr.cloud/webhook/auditoria-iso";
+            //const webhook = "https://n8n.srv936362.hstgr.cloud/webhook/auditoria-iso";
+            const webhook = "https://n8n.srv936362.hstgr.cloud/webhook/auditor-iso-2";
 
             try {
                 const response = await fetch(webhook, {
                     method: 'POST',
                     body: formData
                 });
-
-                //const response = await fetch(webhook, {
-                //    method: 'POST',
-                //    headers: { 'Content-Type': 'application/json' },
-                //    body: JSON.stringify({ chatInput: msg, sessionId: sessionId })
-                //});
 
                 //if (!response.ok) {
                 //    throw new Error('El servidor devolvió un error en la respuesta: ' + response.status);
@@ -135,16 +130,19 @@
                 const data = await response.json();
 
 
-                // n8n debe devolver un campo llamado "output"
-                //agregarMensaje(data.output || "Error: No recibí respuesta válida.", 'n8n');
-                
                 console.log("Estructura real:", data);
-                
-                array.forEach(element => {
-                    
-                });
 
-                agregarMensaje(data[0].Resultado.evidencia || "Error: No recibí respuesta válida.", 'n8n');
+                for (let i = 0; i < data.length; i++) {
+                    agregarMensaje("tipo_hallazgo: " + data[i].Resultado.tipo_hallazgo || "Error: No recibí respuesta válida.", 'n8n');
+                    agregarMensaje("descripcion_hallazgo: " + data[i].Resultado.descripcion_hallazgo || "Error: No recibí respuesta válida.", 'n8n');
+                    agregarMensaje("evidencia: " + data[i].Resultado.evidencia || "Error: No recibí respuesta válida.", 'n8n');
+                    agregarMensaje("requisito_norma: " + data[i].Resultado.requisito_norma || "Error: No recibí respuesta válida.", 'n8n');
+
+                    if (data[i].Resultado.requiere_mas_info) {
+                        agregarMensaje("n8n pregunta: " + data[i].Resultado.pregunta_adicional, 'n8n');
+                    }
+                }
+
 
             } catch (e) {
                 agregarMensaje("Error de conexión con el servidor.", 'n8n');

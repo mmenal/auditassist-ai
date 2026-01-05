@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Asistente de Auditoría ISO</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f2f7;
+  margin: 0;
+}
+.container {
+  max-width: 900px;
+  margin: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  background: #5b3cc4;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 18px;
+}
+.context {
+  background: #ffffff;
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+}
+.context-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+.context input, .context select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+.chat {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.msg {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  max-width: 80%;
+}
+.user {
+  background: #e0e0ff;
+  align-self: flex-end;
+}
+.ai {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  align-self: flex-start;
+}
+.footer {
+  display: flex;
+  padding: 10px;
+  background: white;
+  border-top: 1px solid #ddd;
+}
+.footer input {
+  flex: 1;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+}
+.footer button {
+  margin-left: 10px;
+  padding: 12px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #5b3cc4;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+small {
+  color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="header">
+    Asistente de Auditoría ISO 9001 / ISO 27001
+  </div>
+
+  <!-- CONTEXTO DE AUDITORÍA -->
+  <div class="context">
+    <div class="context-grid">
+      <select id="norma">
+        <option value="ISO 9001">ISO 9001</option>
+        <option value="ISO 27001">ISO 27001</option>
+      </select>
+
+      <input id="proceso" placeholder="Proceso auditado (ej: Compras)">
+      <input id="empresa" placeholder="Empresa auditada">
+      <input id="fecha" type="date">
+
+      <input id="docs" type="file" multiple>
+    </div>
+    <small>Podés cargar auditorías pasadas, informes o registros como contexto.</small>
+  </div>
+
+  <!-- CHAT -->
+  <div class="chat" id="chat"></div>
+
+  <!-- INPUT -->
+  <div class="footer">
+    <input id="input" placeholder="Describí lo observado o hacé una pregunta…" />
+    <button onclick="send()">Enviar</button>
+  </div>
+
+</div>
+
+<script>
+async function enviarMensaje() {
+  const input = document.getElementById("mensaje");
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  agregarMensaje(texto, "user");
+  input.value = "";
+
+  try {
+    const response = await fetch("https://n8n.srv936362.hstgr.cloud/webhook/auditoria-iso", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        mensaje: texto
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("Error HTTP " + response.status);
+    }
+
+    const data = await response.json();
+
+    if (!data || !data.respuesta) {
+      throw new Error("Respuesta vacía del servidor");
+    }
+
+    agregarMensaje(data.respuesta, "bot");
+
+  } catch (error) {
+    agregarMensaje("Error: " + error.message, "bot");
+    function agregarMensaje(texto, tipo) {
+  const chat = document.getElementById("chat");
+  const div = document.createElement("div");
+  div.className = tipo === "user" ? "mensaje-user" : "mensaje-bot";
+  div.innerText = texto;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+  }
+}
+</script>
+ 
+
+</body>
+</html>
